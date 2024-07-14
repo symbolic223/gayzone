@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,5 +58,21 @@ public final class Gayzone extends JavaPlugin implements Listener {
                 }
             }
         }, 0L, 6000L);
+    }
+
+    private static final double CHAT_RADIUS = 50.0;
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        Player sender = event.getPlayer();
+        double chatRadiusSquared = CHAT_RADIUS * CHAT_RADIUS;
+
+        event.getRecipients().clear();
+        for (Player recipient : Bukkit.getOnlinePlayers()) {
+            if (recipient.getWorld().equals(sender.getWorld()) &&
+                    recipient.getLocation().distanceSquared(sender.getLocation()) <= chatRadiusSquared) {
+                event.getRecipients().add(recipient);
+            }
+        }
     }
 }
