@@ -54,6 +54,6 @@ public final class Gayzone extends JavaPlugin implements Listener {
                     Bukkit.broadcastMessage(message);
                 }
             }
-        }, 0L, 6000L); // 0L is the delay before the first run, 6000L is the period (6000 ticks = 5 minutes)
+        }, 0L, 6000L);
     }
 }
