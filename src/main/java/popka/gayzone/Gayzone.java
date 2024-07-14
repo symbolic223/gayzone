@@ -65,7 +65,14 @@ public final class Gayzone extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
+        String message = event.getMessage();
+        if (message.startsWith("!")) {
+            event.setMessage(message.substring(1));
+            return;
+        }
+
         double chatRadiusSquared = CHAT_RADIUS * CHAT_RADIUS;
+
 
         event.getRecipients().clear();
         for (Player recipient : Bukkit.getOnlinePlayers()) {
