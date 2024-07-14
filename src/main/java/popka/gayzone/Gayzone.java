@@ -18,6 +18,7 @@ public final class Gayzone extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         Bukkit.getPluginManager().registerEvents(this, this);
+        scheduleAutoMessages();
     }
 
     @Override
