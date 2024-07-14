@@ -33,7 +33,7 @@ public final class Gayzone extends JavaPlugin implements Listener {
         player.sendMessage(String.format("Прив, %s)", playerName));
     }
 
-    // если плеер вышел, то выводим коорды в консось нових покаленя
+
     @EventHandler
     public void onPlayerDisconnect(PlayerQuitEvent ev) {
         Player player = ev.getPlayer();
