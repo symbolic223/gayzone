@@ -1,0 +1,5 @@
+name: gayzone
+version: '1.0'
+main: popka.gayzone.Gayzone
+api-version: '1.19'
+load: STARTUP

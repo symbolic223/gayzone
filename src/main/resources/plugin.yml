@@ -1,0 +1,5 @@
+name: gayzone
+version: '${project.version}'
+main: popka.gayzone.Gayzone
+api-version: '1.19'
+load: STARTUP
