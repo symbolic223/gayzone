@@ -125,13 +125,20 @@ public final class gayzone extends JavaPlugin implements Listener {
                 return true;
             }
 
-            if (args.length < 2) {
-                player.sendMessage(ChatColor.RED + "Использование: /setprefix <префикс> <цвет>");
+            if (args.length < 3) {
+                player.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> <цвет>");
                 return true;
             }
 
-            String prefix = args[0];
-            String colorName = args[1].toUpperCase();
+            String targetPlayerName = args[0];
+            String prefix = args[1];
+            String colorName = args[2].toUpperCase();
+
+            Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
+            if (targetPlayer == null) {
+                player.sendMessage(ChatColor.RED + "Игрок не найден.");
+                return true;
+            }
 
             ChatColor color;
             try {
@@ -142,9 +149,9 @@ public final class gayzone extends JavaPlugin implements Listener {
             }
 
             String coloredPrefix = color + "[" + prefix + "]" + ChatColor.RESET;
-            playerPrefixes.put(player.getName(), coloredPrefix);
-            setPlayerPrefix(player);
-            player.sendMessage(ChatColor.GREEN + "Ваш префикс установлен на: " + coloredPrefix);
+            playerPrefixes.put(targetPlayer.getName(), coloredPrefix);
+            setPlayerPrefix(targetPlayer);
+            player.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + coloredPrefix);
             return true;
         }
         return false;
