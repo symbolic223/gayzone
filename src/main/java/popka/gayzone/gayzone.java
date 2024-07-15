@@ -113,20 +113,13 @@ public final class gayzone extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("setprefix")) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage("Эту команду может использовать только игрок.");
-                return true;
-            }
-
-            Player player = (Player) sender;
-
-            if (!player.hasPermission("gayzone.setprefix")) {
-                player.sendMessage(ChatColor.RED + "У вас нет прав для использования этой команды.");
+            if (!sender.hasPermission("gayzone.setprefix")) {
+                sender.sendMessage(ChatColor.RED + "У вас нет прав для использования этой команды.");
                 return true;
             }
 
             if (args.length < 3) {
-                player.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> <цвет>");
+                sender.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> <цвет>");
                 return true;
             }
 
@@ -136,7 +129,7 @@ public final class gayzone extends JavaPlugin implements Listener {
 
             Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
             if (targetPlayer == null) {
-                player.sendMessage(ChatColor.RED + "Игрок не найден.");
+                sender.sendMessage(ChatColor.RED + "Игрок не найден.");
                 return true;
             }
 
@@ -144,14 +137,14 @@ public final class gayzone extends JavaPlugin implements Listener {
             try {
                 color = ChatColor.valueOf(colorName);
             } catch (IllegalArgumentException e) {
-                player.sendMessage(ChatColor.RED + "Неверный цвет. Используйте один из следующих цветов: " + getColorList());
+                sender.sendMessage(ChatColor.RED + "Неверный цвет. Используйте один из следующих цветов: " + getColorList());
                 return true;
             }
 
             String coloredPrefix = color + "[" + prefix + "]" + ChatColor.RESET;
             playerPrefixes.put(targetPlayer.getName(), coloredPrefix);
             setPlayerPrefix(targetPlayer);
-            player.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + coloredPrefix);
+            sender.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + coloredPrefix);
             return true;
         }
         return false;
