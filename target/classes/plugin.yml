@@ -3,3 +3,13 @@ version: '1.0'
 main: popka.gayzone.gayzone
 api-version: '1.20'
 load: STARTUP
+commands:
+  setprefix:
+    description: Установить префикс игрока
+    usage: /setprefix <префикс> <цвет>
+    permission: gayzone.setprefix
+    permission-message: "У вас нет прав для использования этой команды."
+permissions:
+  gayzone.setprefix:
+    description: Позволяет устанавливать префиксы
+    default: op
