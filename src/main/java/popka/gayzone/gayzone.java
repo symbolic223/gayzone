@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public final class Gayzone extends JavaPlugin implements Listener {
+public final class gayzone extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
@@ -31,7 +31,16 @@ public final class Gayzone extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent ev) {
         Player player = ev.getPlayer();
         String playerName = player.getName();
+        Integer playerCount = Bukkit.getOnlinePlayers().size();
         player.sendMessage(String.format("Прив, %s)", playerName));
+        if (Bukkit.getOnlinePlayers().size() > 4) {
+            player.sendMessage(String.format("Текущее кол-во игроков = %d", playerCount));
+            player.sendMessage("Проксимити чат - включен.");
+        }
+        else {
+            player.sendMessage(String.format("Текущее кол-во игроков = %d", playerCount));
+            player.sendMessage("Проксимити чат - выключен.");
+        }
     }
 
 
@@ -66,8 +75,14 @@ public final class Gayzone extends JavaPlugin implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
         String message = event.getMessage();
-        if (message.startsWith("!")) {
+        Integer playerCount = Bukkit.getOnlinePlayers().size();
+        if (message.startsWith("!") && playerCount > 4) {
             event.setMessage(message.substring(1));
+            return;
+        }
+
+        if (playerCount < 4) {
+            event.getRecipients().addAll(Bukkit.getOnlinePlayers());
             return;
         }
 
