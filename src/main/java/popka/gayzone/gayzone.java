@@ -84,6 +84,7 @@ public final class gayzone extends JavaPlugin implements Listener {
         Player sender = event.getPlayer();
         String message = event.getMessage();
         Integer playerCount = Bukkit.getOnlinePlayers().size();
+
         if (message.startsWith("!") && playerCount > 4) {
             event.setMessage(message.substring(1));
             return;
@@ -103,6 +104,10 @@ public final class gayzone extends JavaPlugin implements Listener {
                 event.getRecipients().add(recipient);
             }
         }
+
+        // Установить формат сообщений
+        String prefix = playerPrefixes.getOrDefault(sender.getName(), "");
+        event.setFormat(prefix + " " + sender.getName() + ": " + message);
     }
 
     @Override
