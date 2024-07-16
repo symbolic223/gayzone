@@ -158,7 +158,7 @@ public final class gayzone extends JavaPlugin implements Listener {
             }
 
             if (args.length < 3) {
-                sender.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> <цвет>");
+                sender.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> <цвет> [<формат>...]");
                 return true;
             }
 
@@ -180,11 +180,29 @@ public final class gayzone extends JavaPlugin implements Listener {
                 return true;
             }
 
-            String coloredPrefix = color + "[" + prefix + "]" + ChatColor.RESET;
-            playerPrefixes.put(targetPlayer.getName(), coloredPrefix);
+            StringBuilder formattedPrefix = new StringBuilder(color.toString()).append("[").append(prefix).append("]").append(ChatColor.RESET);
+
+            if (args.length > 3) {
+                for (int i = 3; i < args.length; i++) {
+                    try {
+                        ChatColor format = ChatColor.valueOf(args[i].toUpperCase());
+                        if (format.isFormat()) {
+                            formattedPrefix.insert(0, format.toString());
+                        } else {
+                            sender.sendMessage(ChatColor.RED + "Неверный формат. Используйте один из следующих форматов: " + getFormatList());
+                            return true;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        sender.sendMessage(ChatColor.RED + "Неверный формат. Используйте один из следующих форматов: " + getFormatList());
+                        return true;
+                    }
+                }
+            }
+
+            playerPrefixes.put(targetPlayer.getName(), formattedPrefix.toString());
             setPlayerPrefix(targetPlayer);
-            savePrefixes();
-            sender.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + coloredPrefix);
+            savePrefixes();  // Сохранить префиксы сразу после установки
+            sender.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + formattedPrefix);
             return true;
         }
         return false;
@@ -201,9 +219,18 @@ public final class gayzone extends JavaPlugin implements Listener {
     private String getColorList() {
         StringBuilder colors = new StringBuilder();
         for (ChatColor color : ChatColor.values()) {
-            if (color.isFormat()) continue; // Пропустить форматы текста (BOLD, ITALIC и т.д.)
+            if (color.isFormat()) continue;
             colors.append(color.name()).append(", ");
         }
-        return colors.toString().substring(0, colors.length() - 2); // Удалить последнее ", "
+        return colors.toString().substring(0, colors.length() - 2);
+    }
+
+    private String getFormatList() {
+        StringBuilder formats = new StringBuilder();
+        for (ChatColor format : ChatColor.values()) {
+            if (!format.isFormat()) continue;
+            formats.append(format.name()).append(", ");
+        }
+        return formats.toString().substring(0, formats.length() - 2);
     }
 }
