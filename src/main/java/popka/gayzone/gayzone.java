@@ -1,5 +1,7 @@
 package popka.gayzone;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,6 +14,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,17 +28,49 @@ import java.util.stream.Collectors;
 public final class gayzone extends JavaPlugin implements Listener {
 
     private final Map<String, String> playerPrefixes = new HashMap<>();
+    private final Gson gson = new Gson();
+    private final File prefixesFile = new File(getDataFolder(), "prefixes.json");
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         Bukkit.getPluginManager().registerEvents(this, this);
         scheduleAutoMessages();
+        loadPrefixes();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        savePrefixes();
+    }
+
+    private void loadPrefixes() {
+        if (!prefixesFile.getParentFile().exists()) {
+            prefixesFile.getParentFile().mkdirs();
+        }
+
+        if (prefixesFile.exists()) {
+            try (FileReader reader = new FileReader(prefixesFile)) {
+                Type type = new TypeToken<Map<String, String>>() {}.getType();
+                Map<String, String> loadedPrefixes = gson.fromJson(reader, type);
+                playerPrefixes.putAll(loadedPrefixes);
+            } catch (IOException e) {
+                getLogger().severe("Не удалось загрузить префиксы: " + e.getMessage());
+            }
+        }
+    }
+
+    private void savePrefixes() {
+        if (!prefixesFile.getParentFile().exists()) {
+            prefixesFile.getParentFile().mkdirs();
+        }
+
+        try (FileWriter writer = new FileWriter(prefixesFile)) {
+            gson.toJson(playerPrefixes, writer);
+        } catch (IOException e) {
+            getLogger().severe("Не удалось сохранить префиксы: " + e.getMessage());
+        }
     }
 
     @EventHandler
@@ -144,6 +183,7 @@ public final class gayzone extends JavaPlugin implements Listener {
             String coloredPrefix = color + "[" + prefix + "]" + ChatColor.RESET;
             playerPrefixes.put(targetPlayer.getName(), coloredPrefix);
             setPlayerPrefix(targetPlayer);
+            savePrefixes();
             sender.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + coloredPrefix);
             return true;
         }
