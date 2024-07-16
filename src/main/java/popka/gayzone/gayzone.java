@@ -187,7 +187,7 @@ public final class gayzone extends JavaPlugin implements Listener {
                     try {
                         ChatColor format = ChatColor.valueOf(args[i].toUpperCase());
                         if (format.isFormat()) {
-                            formattedPrefix.insert(0, format.toString());
+                            formattedPrefix.insert(color.toString().length(), format.toString());
                         } else {
                             sender.sendMessage(ChatColor.RED + "Неверный формат. Используйте один из следующих форматов: " + getFormatList());
                             return true;
@@ -219,18 +219,18 @@ public final class gayzone extends JavaPlugin implements Listener {
     private String getColorList() {
         StringBuilder colors = new StringBuilder();
         for (ChatColor color : ChatColor.values()) {
-            if (color.isFormat()) continue;
+            if (color.isFormat()) continue; // Пропустить форматы текста (BOLD, ITALIC и т.д.)
             colors.append(color.name()).append(", ");
         }
-        return colors.toString().substring(0, colors.length() - 2);
+        return colors.toString().substring(0, colors.length() - 2); // Удалить последнее ", "
     }
 
     private String getFormatList() {
         StringBuilder formats = new StringBuilder();
         for (ChatColor format : ChatColor.values()) {
-            if (!format.isFormat()) continue;
+            if (!format.isFormat()) continue; // Пропустить цвета текста
             formats.append(format.name()).append(", ");
         }
-        return formats.toString().substring(0, formats.length() - 2);
+        return formats.toString().substring(0, formats.length() - 2); // Удалить последнее ", "
     }
 }
