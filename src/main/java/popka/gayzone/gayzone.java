@@ -74,7 +74,7 @@ public final class gayzone extends JavaPlugin implements Listener {
                     Bukkit.broadcastMessage(message);
                 }
             }
-        }, 0L, 6000L);
+        }, 0L, 24000L);
     }
 
     private static final double CHAT_RADIUS = 50.0;
