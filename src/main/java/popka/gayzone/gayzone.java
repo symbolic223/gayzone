@@ -110,7 +110,7 @@ public final class gayzone extends JavaPlugin implements Listener {
             return;
         }
 
-        if (playerCount < 4) {
+        if (playerCount <= 4) {
             event.getRecipients().addAll(Bukkit.getOnlinePlayers());
             return;
         }
