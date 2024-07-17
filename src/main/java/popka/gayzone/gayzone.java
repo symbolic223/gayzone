@@ -101,20 +101,7 @@ public final class gayzone extends JavaPlugin implements Listener {
         System.out.println(String.format("Игрок %s вышел на координатах (%.2f, %.2f, %.2f)", playerName, posx, posy, posz));
     }
 
-    private void scheduleAutoMessages() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                List<Player> players = Bukkit.getOnlinePlayers().stream().collect(Collectors.toList());
-                if (!players.isEmpty()) {
-                    Random random = new Random();
-                    Player randomPlayer = players.get(random.nextInt(players.size()));
-                    String message = String.format("А вы знали, что %s главный гей этого сервера?", randomPlayer.getName());
-                    Bukkit.broadcastMessage(message);
-                }
-            }
-        }, 0L, 24000L);
-    }
+
 
     private static final double CHAT_RADIUS = 50.0;
 
