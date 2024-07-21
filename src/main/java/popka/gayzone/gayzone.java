@@ -13,6 +13,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.FileReader;
@@ -33,6 +36,7 @@ public final class gayzone extends JavaPlugin implements Listener {
         // Plugin startup logic
         Bukkit.getPluginManager().registerEvents(this, this);
         loadPrefixes();
+        setupScoreboard();
     }
 
     @Override
@@ -66,6 +70,18 @@ public final class gayzone extends JavaPlugin implements Listener {
             gson.toJson(playerPrefixes, writer);
         } catch (IOException e) {
             getLogger().severe("Не удалось сохранить префиксы: " + e.getMessage());
+        }
+    }
+
+    private void setupScoreboard() {
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        if (manager != null) {
+            Scoreboard board = manager.getMainScoreboard();
+            Team team = board.getTeam("prefixTeam");
+            if (team == null) {
+                team = board.registerNewTeam("prefixTeam");
+                team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
+            }
         }
     }
 
@@ -187,9 +203,26 @@ public final class gayzone extends JavaPlugin implements Listener {
 
     private void setPlayerPrefix(Player player) {
         String prefix = playerPrefixes.getOrDefault(player.getName(), "");
-        if (!prefix.isEmpty()) {
-            player.setDisplayName(prefix + " " + player.getName());
-            player.setPlayerListName(prefix + " " + player.getName());
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        if (manager != null) {
+            Scoreboard board = manager.getMainScoreboard();
+            Team team = board.getTeam("prefixTeam");
+            if (team == null) {
+                team = board.registerNewTeam("prefixTeam");
+                team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
+            }
+
+            if (!prefix.isEmpty()) {
+                player.setDisplayName(prefix + " " + player.getName());
+                player.setPlayerListName(prefix + " " + player.getName());
+                team.addEntry(player.getName());
+                team.setPrefix(prefix + " ");
+            } else {
+                player.setDisplayName(player.getName());
+                player.setPlayerListName(player.getName());
+                team.removeEntry(player.getName());
+            }
+            player.setScoreboard(board);
         }
     }
 
