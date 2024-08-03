@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-
+// sous
 public final class gayzone extends JavaPlugin implements Listener {
 
     private final Map<String, String> playerPrefixes = new HashMap<>();
