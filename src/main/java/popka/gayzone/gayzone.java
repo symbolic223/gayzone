@@ -1,5 +1,6 @@
 package popka.gayzone;
 
+import java.util.Arrays;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
@@ -137,55 +138,65 @@ public final class gayzone extends JavaPlugin implements Listener {
                 return true;
             }
 
-            if (args.length < 3) {
-                sender.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> <цвет> [<формат>...]");
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Использование: /setprefix <игрок> <префикс> [<цвет>...]");
                 return true;
             }
 
             String targetPlayerName = args[0];
-            String prefix = args[1];
-            String colorName = args[2].toUpperCase();
-
             Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
             if (targetPlayer == null) {
                 sender.sendMessage(ChatColor.RED + "Игрок не найден.");
                 return true;
             }
 
-            ChatColor color;
-            try {
-                color = ChatColor.valueOf(colorName);
-            } catch (IllegalArgumentException e) {
-                sender.sendMessage(ChatColor.RED + "Неверный цвет. Используйте один из следующих цветов: " + getColorList());
-                return true;
+            // Сборка префикса до момента обнаружения цвета
+            StringBuilder prefixBuilder = new StringBuilder();
+            int colorIndex = -1;
+
+            for (int i = 1; i < args.length; i++) {
+                if (isChatColor(args[i])) {
+                    colorIndex = i;
+                    break;
+                }
+                prefixBuilder.append(args[i]).append(" ");
             }
 
-            StringBuilder formattedPrefix = new StringBuilder(color.toString()).append("[").append(prefix).append("]").append(ChatColor.RESET);
+            String prefix = prefixBuilder.toString().trim();
+            ChatColor color = ChatColor.WHITE; // Цвет по умолчанию
+            StringBuilder colorAndFormatBuilder = new StringBuilder();
 
-            if (args.length > 3) {
-                for (int i = 3; i < args.length; i++) {
-                    try {
-                        ChatColor format = ChatColor.valueOf(args[i].toUpperCase());
-                        if (format.isFormat()) {
-                            formattedPrefix.insert(color.toString().length(), format.toString());
-                        } else {
-                            sender.sendMessage(ChatColor.RED + "Неверный формат. Используйте один из следующих форматов: " + getFormatList());
-                            return true;
-                        }
-                    } catch (IllegalArgumentException e) {
-                        sender.sendMessage(ChatColor.RED + "Неверный формат. Используйте один из следующих форматов: " + getFormatList());
+            if (colorIndex != -1) {
+                for (int i = colorIndex; i < args.length; i++) {
+                    if (isChatColor(args[i])) {
+                        colorAndFormatBuilder.append(ChatColor.valueOf(args[i].toUpperCase()));
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Неверный цвет или формат: " + args[i]);
                         return true;
                     }
                 }
+                color = ChatColor.valueOf(args[colorIndex].toUpperCase());
             }
 
-            playerPrefixes.put(targetPlayer.getName(), formattedPrefix.toString());
+            String formattedPrefix = colorAndFormatBuilder + "[" + prefix + "]" + ChatColor.RESET;
+
+            playerPrefixes.put(targetPlayer.getName(), formattedPrefix);
             setPlayerPrefix(targetPlayer);
-            savePrefixes();  // Сохранить префиксы сразу после установки
+            savePrefixes(); // Сохранить префиксы сразу после установки
             sender.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + formattedPrefix);
             return true;
         }
         return false;
+    }
+
+    // Метод для проверки, является ли строка допустимым цветом или форматом
+    private boolean isChatColor(String arg) {
+        try {
+            ChatColor.valueOf(arg.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private void setPlayerPrefix(Player player) {
