@@ -29,7 +29,7 @@ import java.util.Map;
 public final class gayzone extends JavaPlugin implements Listener {
 
     private final Map<String, String> playerPrefixes = new HashMap<>();
-    private final Gson gson = new Gson();
+    private final com.google.gson.Gson gson = new Gson();
     private final File prefixesFile = new File(getDataFolder(), "prefixes.json");
 
     @Override
