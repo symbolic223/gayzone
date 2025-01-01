@@ -1,8 +1,8 @@
 package popka.gayzone;
 
-import java.util.Arrays;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
