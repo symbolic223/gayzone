@@ -9,7 +9,23 @@ commands:
     usage: /setprefix <игрок> <префикс> <цвет>
     permission: gayzone.setprefix
     permission-message: "У вас нет прав для использования этой команды."
+  warn:
+    description: "Выдать предупреждение игроку о подозрении в читерстве."
+    usage: "/warn <игрок>"
+    permission: gayzone.warn
+    permission-message: "У вас нет прав для использования этой команды."
+  war:
+    description: "Объявляет войну между двумя фракциями."
+    usage: "/war <фракция1> <фракция2>"
+    permission: "gayzone.war"
+    permission-message: "У вас нет прав для использования этой команды."
 permissions:
   gayzone.setprefix:
     description: Позволяет устанавливать префиксы
+    default: op
+  gayzone.warn:
+    description: Выдаёт предупреждение игроку
+    default: op
+  gayzone.war:
+    description: Объявляет войну
     default: op

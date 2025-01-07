@@ -1,6 +1,5 @@
 package popka.gayzone;
 
-import java.util.Arrays;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
@@ -52,7 +51,8 @@ public final class gayzone extends JavaPlugin implements Listener {
 
         if (prefixesFile.exists()) {
             try (FileReader reader = new FileReader(prefixesFile)) {
-                Type type = new TypeToken<Map<String, String>>() {}.getType();
+                Type type = new TypeToken<Map<String, String>>() {
+                }.getType();
                 Map<String, String> loadedPrefixes = gson.fromJson(reader, type);
                 playerPrefixes.putAll(loadedPrefixes);
             } catch (IOException e) {
@@ -132,6 +132,7 @@ public final class gayzone extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Обработка команды setprefix
         if (command.getName().equalsIgnoreCase("setprefix")) {
             if (!sender.hasPermission("gayzone.setprefix")) {
                 sender.sendMessage(ChatColor.RED + "У вас нет прав для использования этой команды.");
@@ -150,7 +151,6 @@ public final class gayzone extends JavaPlugin implements Listener {
                 return true;
             }
 
-            // Сборка префикса до момента обнаружения цвета
             StringBuilder prefixBuilder = new StringBuilder();
             int colorIndex = -1;
 
@@ -163,7 +163,7 @@ public final class gayzone extends JavaPlugin implements Listener {
             }
 
             String prefix = prefixBuilder.toString().trim();
-            ChatColor color = ChatColor.WHITE; // Цвет по умолчанию
+            ChatColor color = ChatColor.WHITE;
             StringBuilder colorAndFormatBuilder = new StringBuilder();
 
             if (colorIndex != -1) {
@@ -182,10 +182,67 @@ public final class gayzone extends JavaPlugin implements Listener {
 
             playerPrefixes.put(targetPlayer.getName(), formattedPrefix);
             setPlayerPrefix(targetPlayer);
-            savePrefixes(); // Сохранить префиксы сразу после установки
+            savePrefixes();
             sender.sendMessage(ChatColor.GREEN + "Префикс для " + targetPlayerName + " установлен на: " + formattedPrefix);
+
             return true;
         }
+
+        // Обработка команды warn
+        if (command.getName().equalsIgnoreCase("warn")) {
+            if (!sender.hasPermission("gayzone.warn")) {
+                sender.sendMessage(ChatColor.RED + "У вас нет прав для использования этой команды.");
+                return true;
+            }
+
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Использование: /warn <игрок> <discord_admin>");
+                return true;
+            }
+
+            String targetPlayerName = args[0];
+            Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
+            if (targetPlayer == null) {
+                sender.sendMessage(ChatColor.RED + "Игрок не найден.");
+                return true;
+            }
+
+            String discordAdmin = args[1];
+            if (discordAdmin == null || discordAdmin.isEmpty()) {
+                sender.sendMessage(ChatColor.RED + "Вы не указали контактный Discord!");
+                return true;
+            }
+
+            String title = ChatColor.RED + "" + ChatColor.BOLD + "Вы подозреваетесь в читерстве!";
+            String subtitle = ChatColor.YELLOW + "Свяжитесь с администрацией в дискорде для проверки: " + discordAdmin;
+
+            targetPlayer.sendTitle(title, subtitle, 10, 70, 20);
+            sender.sendMessage(ChatColor.GREEN + "Игроку " + targetPlayerName + " отправлено предупреждение с указанием Discord администратора: " + discordAdmin);
+
+            return true;
+        }
+
+        // Обработка команды war
+        if (command.getName().equalsIgnoreCase("war")) {
+            if (!sender.hasPermission("gayzone.war")) {
+                sender.sendMessage(ChatColor.RED + "У вас нет прав для использования этой команды.");
+                return true;
+            }
+
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Использование: /war <фракция1> <фракция2>");
+                return true;
+            }
+
+            String faction1 = args[0];
+            String faction2 = args[1];
+
+            // Сообщение в чат с форматированием
+            Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[Объявление] " + ChatColor.YELLOW + "Фракция " + faction1 + " объявила войну фракции " + faction2 + "! Настало время показать свою силу на поле битвы!");
+
+            return true;
+        }
+
         return false;
     }
 
